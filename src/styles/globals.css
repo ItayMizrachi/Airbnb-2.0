@@ -1,0 +1,12 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer components {
+}
+
+body {
+  /* background-color: #fff; */
+  /* color: black; */
+  /* min-height: 100vh; */
+}
