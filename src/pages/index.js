@@ -1,12 +1,21 @@
+import Banner from "@/components/Banner";
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import LargeCard from "@/components/LargeCard";
+import MediumCard from "@/components/MediumCard";
+import SmallCard from "@/components/SmallCard";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Home() {
-  const [selectedTheme, setSelectedTheme] = useState(
-    localStorage.getItem("selectedTheme") || "light"
-  );
+export default function Home({ exploreData, cardsData }) {
+  const [selectedTheme, setSelectedTheme] = useState("light");
 
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("selectedTheme");
+    if (storedTheme) setSelectedTheme(storedTheme);
+  }, []);
+
+  console.log(cardsData);
   const themes = [
     "light",
     "dark",
@@ -48,12 +57,96 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <div className="min-h-screen" data-theme={selectedTheme}>
-      <Header
-        themes={themes}
-        selectedTheme={selectedTheme}
-        setSelectedTheme={setSelectedTheme}
-      />
-       </div>
+        <Header
+          themes={themes}
+          selectedTheme={selectedTheme}
+          setSelectedTheme={setSelectedTheme}
+        />
+        <Banner />
+
+        <main className="max-w-7xl mx-auto px-8 sm:px-16">
+          <section className="py-6">
+            <h2 className="text-2xl md:text-4xl font-semibold pb-5">
+              Explore Nearby
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {exploreData?.map((item, i) => (
+                <SmallCard
+                  key={i}
+                  img={item.img}
+                  distance={item.distance}
+                  location={item.location}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl md:text-4xl font-semibold py-8">
+              Live Anywhere
+            </h2>
+            <div className="flex space-x-3 overflow-scroll scrollbar-hide p-3 -ml-3">
+              {cardsData?.map((item, i) => (
+                <MediumCard key={i} img={item.img} title={item.title} />
+              ))}
+            </div>
+          </section>
+
+          <LargeCard
+            img="https://links.papareact.com/4cj"
+            title="The Greatest Outdoors"
+            description="Wishlists created by Airbnb, "
+            buttonText="Get Inspired"
+          />
+        </main>
+
+        <Footer />
+      </div>
     </>
   );
+}
+
+// export async function getStaticProps() {
+//   const exploreData = await fetch("https://www.jsonkeeper.com/b/4G1G").then(
+//     (res) => res.json()
+//   );
+
+//   return {
+//     props: {
+//       exploreData,
+//     },
+//   };
+// }
+
+export async function getStaticProps() {
+  try {
+    const res = await fetch("https://www.jsonkeeper.com/b/4G1G");
+    if (!res.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const exploreData = await res.json();
+
+    const res2 = await fetch("https://www.jsonkeeper.com/b/VHHT");
+    if (!res2.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const cardsData = await res2.json();
+
+    return {
+      props: {
+        exploreData,
+        cardsData,
+      },
+    };
+  } catch (error) {
+    console.error("Fetch error:", error.message);
+
+    return {
+      props: {
+        exploreData: [],
+        cardsData: [],
+      },
+    };
+  }
 }
