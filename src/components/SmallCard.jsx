@@ -7,7 +7,7 @@ const SmallCard = ({ img, location, distance }) => {
      md:hover:scale-105 transition transform duration-200 ease-out">
       {/* left */}
       <div className="relative h-16 w-16 ">
-        <Image className="rounded-lg" src={img} layout="fill" />
+        <Image alt="place" className="rounded-lg" src={img} layout="fill" />
       </div>
       {/* left */}
       {/* Right */}

@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import LargeCard from "@/components/LargeCard";
 import MediumCard from "@/components/MediumCard";
 import SmallCard from "@/components/SmallCard";
+import Test from "@/components/Test";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
@@ -100,6 +101,9 @@ export default function Home({ exploreData, cardsData }) {
             buttonText="Get Inspired"
           />
         </main>
+        {/* <div className="min-h-[50vh] min-w-[500px]">
+          <Test />
+        </div> */}
 
         <Footer />
       </div>

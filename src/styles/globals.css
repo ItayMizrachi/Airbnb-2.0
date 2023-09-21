@@ -3,10 +3,13 @@
 @import "tailwindcss/utilities";
 
 @layer components {
+  .search-button {
+    @apply px-4 py-2 border rounded-full  cursor-pointer hover:shadow-lg active:scale-95 active:bg-base-200 transition transform  duration-100 ease-out
+  }
 }
 
 body {
   /* background-color: #fff; */
   /* color: black; */
-  /* min-height: 100vh; */
+  min-height: 100vh;
 }

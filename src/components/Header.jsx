@@ -1,14 +1,47 @@
 import Image from "next/image";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   GlobeAltIcon,
   MenuIcon,
   SearchIcon,
   UserCircleIcon,
+  UsersIcon,
 } from "@heroicons/react/solid";
+import { DateRangePicker } from "react-date-range";
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
+import { useRouter } from "next/router";
 
-const Header = ({ selectedTheme, setSelectedTheme, themes }) => {
+const Header = ({ selectedTheme, setSelectedTheme, themes, placeholder }) => {
+  const [searchInput, setSearchInput] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [noOfGuests, setNoOfGuests] = useState(1);
   const drawerToggleRef = useRef(null);
+  const router = useRouter();
+
+  const selectionRange = {
+    startDate: startDate,
+    endDate: endDate,
+    key: "selection",
+  };
+
+  const handleSelect = (ranges) => {
+    setStartDate(ranges.selection.startDate);
+    setEndDate(ranges.selection.endDate);
+  };
+
+  const search = () => {
+    router.push({
+      pathname: "/search",
+      query: {
+        location: searchInput,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        noOfGuests,
+      },
+    });
+  };
 
   const closeDrawer = () => {
     if (drawerToggleRef.current) {
@@ -31,8 +64,12 @@ const Header = ({ selectedTheme, setSelectedTheme, themes }) => {
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
 
       {/* Left */}
-      <div className="px-2 mx-2 relative flex items-center h-full w-24 cursor-pointer my-auto ">
+      <div
+        onClick={() => router.push("/")}
+        className="px-2 mx-2 relative flex items-center h-full w-24 cursor-pointer my-auto "
+      >
         <Image
+          alt="logo"
           src="https://links.papareact.com/qd3"
           layout="fill"
           objectFit="contain"
@@ -44,8 +81,10 @@ const Header = ({ selectedTheme, setSelectedTheme, themes }) => {
       {/* Middle */}
       <div className="flex justify-between items-center md:border-2 rounded-full py-2 md:shadow-sm">
         <input
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           type="text"
-          placeholder="Start your search"
+          placeholder={placeholder || "Start your search"}
           className="flex-frow bg-transparent focus:outline-none pl-5 text-sm text-gray-600 placeholder-gray-400"
         />
         <SearchIcon className="hidden lg:inline-flex w-8 h-8 bg-red-400 text-white rounded-full p-2 cursor-pointer md:mx-2" />
@@ -76,19 +115,47 @@ const Header = ({ selectedTheme, setSelectedTheme, themes }) => {
           <UserCircleIcon className="h-6 cursor-pointer" />
         </div>
       </div>
-      {/* <select
-        className="select font-semibold ml-auto text-base w-full max-w-[140px] hover:bg-base-content/10 focus:bg-base-content/10 focus:border-none focus:outline-none hidden lg:block"
-        value={selectedTheme}
-        onChange={handleThemeChange}
-      >
-        {themes.map((theme) => (
-          <option className="bg-base-100" key={theme} value={theme}>
-            {theme}
-          </option>
-        ))}
-      </select> */}
-
       {/* right */}
+
+      {/* Calender */}
+      {searchInput && (
+        <div className="flex flex-col col-span-3 mx-auto mt-4">
+          <DateRangePicker
+            ranges={[selectionRange]}
+            minDate={new Date()}
+            rangeColors={["#FD5B61"]}
+            onChange={handleSelect}
+          />
+          <div className="flex items-center border-b mb-4">
+            <h2 className="text-2xl pl-2 flex-grow font-semibold">
+              Number of Guests
+            </h2>
+            <UsersIcon className="h-5 " />
+            <input
+              value={noOfGuests}
+              onChange={(e) => setNoOfGuests(e.target.value)}
+              className="w-12 pl-2 text-lg outline-none  text-red-400"
+              type="number"
+              min={1}
+            />
+          </div>
+          <div className="flex">
+            <button
+              onClick={() => setSearchInput("")}
+              className="flex-grow text-gray-500 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={search}
+              className="flex-grow text-red-500 cursor-pointer"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Calender */}
 
       {/*drawer content here */}
       <div className="drawer-side ">
